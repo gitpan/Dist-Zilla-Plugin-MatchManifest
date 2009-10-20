@@ -1,0 +1,19 @@
+---
+abstract: 'Ensure that MANIFEST is correct'
+author:
+  - 'Christopher J. Madsen <perl@cjmweb.net>'
+generated_by: 'Dist::Zilla version 1.092850'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Dist-Zilla-Plugin-MatchManifest
+requires:
+  Dist::Zilla: 1.092680
+  Moose: 0.65
+  Moose::Autobox: 0.09
+  Text::Diff: 0
+  autodie: 0
+resources:
+  repository: http://github.com/madsen/dist-zilla-plugin-matchmanifest
+version: 0.01
