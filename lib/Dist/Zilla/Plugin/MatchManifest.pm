@@ -17,7 +17,8 @@ package Dist::Zilla::Plugin::MatchManifest;
 # ABSTRACT: Ensure that MANIFEST is correct
 #---------------------------------------------------------------------
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
+# This file is part of Dist-Zilla-Plugin-MatchManifest 0.02 (March 7, 2010)
 
 
 use Moose;
@@ -56,19 +57,22 @@ sub setup_installer {
   my $stat   = $onDisk->stat;
 
   my $diff = Text::Diff::diff(\$manifestFile->content, \$manifest, {
-    qw(FILENAME_A MANIFEST  FILENAME_B MANIFEST  CONTEXT 0),
+    FILENAME_A => 'MANIFEST (on disk)       ',
+    FILENAME_B => 'MANIFEST (auto-generated)',
+    CONTEXT    => 0,
     MTIME_A => $stat ? $stat->mtime : 0,
     MTIME_B => time,
   });
 
   $diff =~ s/^\@\@.*\n//mg;     # Don't care about line numbers
 
-  $self->zilla->log($diff);
+  $self->log("MANIFEST does not match the collected files!\n$diff");
 
   # See if the author wants to accept the new MANIFEST:
-  die "Can't prompt about MANIFEST mismatch\n" unless -t STDIN and -t STDOUT;
+  $self->log_fatal("Can't prompt about MANIFEST mismatch\n")
+      unless -t STDIN and -t STDOUT;
 
-  die "Aborted because of MANIFEST mismatch\n"
+  $self->log_fatal("Aborted because of MANIFEST mismatch\n")
       unless $self->ask_yn("Update MANIFEST");
 
   # Update the MANIFEST in the distribution:
@@ -78,6 +82,8 @@ sub setup_installer {
   open(my $out, '>', $onDisk);
   print $out $manifest;
   close $out;
+
+  $self->log_debug("Updated MANIFEST");
 } # end setup_installer
 
 #---------------------------------------------------------------------
@@ -106,8 +112,8 @@ Dist::Zilla::Plugin::MatchManifest - Ensure that MANIFEST is correct
 
 =head1 VERSION
 
-This document describes version 0.01 of
-Dist::Zilla::Plugin::MatchManifest, released October 20, 2009.
+This document describes version 0.02 of
+Dist::Zilla::Plugin::MatchManifest, released March 7, 2010.
 
 =head1 DESCRIPTION
 
@@ -152,10 +158,10 @@ No bugs have been reported.
 
 =head1 AUTHOR
 
-Christopher J. Madsen  S<< C<< <perl AT cjmweb.net> >> >>
+Christopher J. Madsen  C<< <perl AT cjmweb.net> >>
 
 Please report any bugs or feature requests to
-S<< C<< <bug-Dist-Zilla-Plugin-MatchManifest AT rt.cpan.org> >> >>,
+C<< <bug-Dist-Zilla-Plugin-MatchManifest AT rt.cpan.org> >>,
 or through the web interface at
 L<http://rt.cpan.org/Public/Bug/Report.html?Queue=Dist-Zilla-Plugin-MatchManifest>
 
@@ -164,7 +170,7 @@ L<< http://github.com/madsen/dist-zilla-plugin-matchmanifest >>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2009 by Christopher J. Madsen.
+This software is copyright (c) 2010 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
