@@ -17,8 +17,8 @@ package Dist::Zilla::Plugin::MatchManifest;
 # ABSTRACT: Ensure that MANIFEST is correct
 #---------------------------------------------------------------------
 
-our $VERSION = '0.02';
-# This file is part of Dist-Zilla-Plugin-MatchManifest 0.02 (March 7, 2010)
+our $VERSION = '0.03';
+# This file is part of Dist-Zilla-Plugin-MatchManifest 0.03 (April 14, 2010)
 
 
 use Moose;
@@ -65,14 +65,16 @@ sub setup_installer {
   });
 
   $diff =~ s/^\@\@.*\n//mg;     # Don't care about line numbers
+  chomp $diff;
 
-  $self->log("MANIFEST does not match the collected files!\n$diff");
+  $self->log("MANIFEST does not match the collected files!");
+  $self->zilla->chrome->logger->log($diff); # No prefix
 
   # See if the author wants to accept the new MANIFEST:
-  $self->log_fatal("Can't prompt about MANIFEST mismatch\n")
+  $self->log_fatal("Can't prompt about MANIFEST mismatch")
       unless -t STDIN and -t STDOUT;
 
-  $self->log_fatal("Aborted because of MANIFEST mismatch\n")
+  $self->log_fatal("Aborted because of MANIFEST mismatch")
       unless $self->ask_yn("Update MANIFEST");
 
   # Update the MANIFEST in the distribution:
@@ -112,8 +114,12 @@ Dist::Zilla::Plugin::MatchManifest - Ensure that MANIFEST is correct
 
 =head1 VERSION
 
-This document describes version 0.02 of
-Dist::Zilla::Plugin::MatchManifest, released March 7, 2010.
+This document describes version 0.03 of
+Dist::Zilla::Plugin::MatchManifest, released April 14, 2010.
+
+=head1 SYNOPSIS
+
+  [MatchManifest]
 
 =head1 DESCRIPTION
 
@@ -158,10 +164,10 @@ No bugs have been reported.
 
 =head1 AUTHOR
 
-Christopher J. Madsen  C<< <perl AT cjmweb.net> >>
+Christopher J. Madsen  S<C<< <perl AT cjmweb.net> >>>
 
 Please report any bugs or feature requests to
-C<< <bug-Dist-Zilla-Plugin-MatchManifest AT rt.cpan.org> >>,
+S<C<< <bug-Dist-Zilla-Plugin-MatchManifest AT rt.cpan.org> >>>,
 or through the web interface at
 L<http://rt.cpan.org/Public/Bug/Report.html?Queue=Dist-Zilla-Plugin-MatchManifest>
 
