@@ -17,8 +17,8 @@ package Dist::Zilla::Plugin::MatchManifest;
 # ABSTRACT: Ensure that MANIFEST is correct
 #---------------------------------------------------------------------
 
-our $VERSION = '0.03';
-# This file is part of Dist-Zilla-Plugin-MatchManifest 0.03 (April 14, 2010)
+our $VERSION = '0.04';
+# This file is part of Dist-Zilla-Plugin-MatchManifest 0.04 (November 11, 2010)
 
 
 use Moose;
@@ -46,7 +46,13 @@ sub setup_installer {
   } # end unless distribution already contained MANIFEST
 
   # List the files actually in the distribution:
-  my $manifest = $files->map(sub{$_->name})->sort->join("\n") . "\n";
+  my $manifest = $files->map(sub {
+    my $name = $_->name;
+    return $name unless $name =~ /[ '\\]/;
+    $name =~ s/\\/\\\\/g;
+    $name =~ s/'/\\'/g;
+    return qq{'$name'};
+  })->sort->join("\n") . "\n";
 
   return if $manifest eq $manifestFile->content;
 
@@ -71,11 +77,9 @@ sub setup_installer {
   $self->zilla->chrome->logger->log($diff); # No prefix
 
   # See if the author wants to accept the new MANIFEST:
-  $self->log_fatal("Can't prompt about MANIFEST mismatch")
-      unless -t STDIN and -t STDOUT;
-
   $self->log_fatal("Aborted because of MANIFEST mismatch")
-      unless $self->ask_yn("Update MANIFEST");
+      unless $self->zilla->chrome->prompt_yn("Update MANIFEST?",
+                                             { default => 0 });
 
   # Update the MANIFEST in the distribution:
   $manifestFile->content($manifest);
@@ -89,19 +93,6 @@ sub setup_installer {
 } # end setup_installer
 
 #---------------------------------------------------------------------
-sub ask_yn
-{
-  my ($self, $prompt) = @_;
-
-  local $| = 1;
-  print "$prompt? (y/n) ";
-
-  my $response = <STDIN>;
-  chomp $response;
-
-  return lc $response eq 'y';
-} # end ask_yn
-
 __PACKAGE__->meta->make_immutable;
 no Moose;
 1;
@@ -114,8 +105,8 @@ Dist::Zilla::Plugin::MatchManifest - Ensure that MANIFEST is correct
 
 =head1 VERSION
 
-This document describes version 0.03 of
-Dist::Zilla::Plugin::MatchManifest, released April 14, 2010.
+This document describes version 0.04 of
+Dist::Zilla::Plugin::MatchManifest, released November 11, 2010.
 
 =head1 SYNOPSIS
 
@@ -125,8 +116,8 @@ Dist::Zilla::Plugin::MatchManifest, released April 14, 2010.
 
 If included, this plugin will ensure that the distribution contains a
 F<MANIFEST> file and that its contents match the files collected by
-Dist::Zilla.  If not, it will display the differences and (if STDIN &
-STDOUT are TTYs) offer to update the F<MANIFEST>.
+Dist::Zilla.  If not, it will display the differences and offer to
+update the F<MANIFEST>.
 
 As I see it, there are 2 problems that a MANIFEST can protect against:
 
@@ -147,7 +138,6 @@ make sure it's kept up to date, you can protect yourself against both
 problems.
 
 =for Pod::Coverage
-ask_yn
 setup_installer
 
 =head1 CONFIGURATION AND ENVIRONMENT
@@ -172,7 +162,7 @@ or through the web interface at
 L<http://rt.cpan.org/Public/Bug/Report.html?Queue=Dist-Zilla-Plugin-MatchManifest>
 
 You can follow or contribute to Dist-Zilla-Plugin-MatchManifest's development at
-L<< http://github.com/madsen/dist-zilla-plugin-matchmanifest >>.
+git://github.com/madsen/dist-zilla-plugin-matchmanifest.git.
 
 =head1 COPYRIGHT AND LICENSE
 
