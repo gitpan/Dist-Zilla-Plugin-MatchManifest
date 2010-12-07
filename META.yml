@@ -26,7 +26,7 @@ requires:
   autodie: 0
 resources:
   repository: git://github.com/madsen/dist-zilla-plugin-matchmanifest.git
-version: 0.04
+version: 4.00
 x_Dist_Zilla:
   plugins:
     -
@@ -72,7 +72,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::PodLoom
       name: '@CJM/PodLoom'
-      version: 3.00
+      version: 3.01
     -
       class: Dist::Zilla::Plugin::MakeMaker
       name: '@CJM/MakeMaker'
@@ -84,7 +84,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::MatchManifest
       name: '@CJM/MatchManifest'
-      version: 0.04
+      version: 4.00
     -
       class: Dist::Zilla::Plugin::GitVersionCheckCJM
       name: '@CJM/GitVersionCheckCJM'
@@ -92,7 +92,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::TemplateCJM
       name: '@CJM/TemplateCJM'
-      version: 3.00
+      version: 3.03
     -
       class: Dist::Zilla::Plugin::Repository
       name: '@CJM/Repository'

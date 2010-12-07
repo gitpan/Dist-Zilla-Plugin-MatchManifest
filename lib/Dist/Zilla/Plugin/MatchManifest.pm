@@ -17,8 +17,8 @@ package Dist::Zilla::Plugin::MatchManifest;
 # ABSTRACT: Ensure that MANIFEST is correct
 #---------------------------------------------------------------------
 
-our $VERSION = '0.04';
-# This file is part of Dist-Zilla-Plugin-MatchManifest 0.04 (November 11, 2010)
+our $VERSION = '4.00';
+# This file is part of Dist-Zilla-Plugin-MatchManifest 4.00 (December 7, 2010)
 
 
 use Moose;
@@ -85,7 +85,7 @@ sub setup_installer {
   $manifestFile->content($manifest);
 
   # And the original on disk:
-  open(my $out, '>', $onDisk);
+  open(my $out, '>:raw:utf8', $onDisk);
   print $out $manifest;
   close $out;
 
@@ -105,8 +105,8 @@ Dist::Zilla::Plugin::MatchManifest - Ensure that MANIFEST is correct
 
 =head1 VERSION
 
-This document describes version 0.04 of
-Dist::Zilla::Plugin::MatchManifest, released November 11, 2010.
+This document describes version 4.00 of
+Dist::Zilla::Plugin::MatchManifest, released December 7, 2010.
 
 =head1 SYNOPSIS
 
@@ -162,7 +162,7 @@ or through the web interface at
 L<http://rt.cpan.org/Public/Bug/Report.html?Queue=Dist-Zilla-Plugin-MatchManifest>
 
 You can follow or contribute to Dist-Zilla-Plugin-MatchManifest's development at
-git://github.com/madsen/dist-zilla-plugin-matchmanifest.git.
+L<< http://github.com/madsen/dist-zilla-plugin-matchmanifest >>.
 
 =head1 COPYRIGHT AND LICENSE
 

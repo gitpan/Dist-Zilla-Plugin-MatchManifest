@@ -30,7 +30,7 @@ my %WriteMakefileArgs = (
     'Text::Diff' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.04',
+  'VERSION' => '4.00',
   'test' => {
     'TESTS' => 't/*.t'
   }
