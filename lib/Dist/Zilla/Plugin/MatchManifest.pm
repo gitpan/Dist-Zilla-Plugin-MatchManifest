@@ -17,8 +17,8 @@ package Dist::Zilla::Plugin::MatchManifest;
 # ABSTRACT: Ensure that MANIFEST is correct
 #---------------------------------------------------------------------
 
-our $VERSION = '4.00';
-# This file is part of Dist-Zilla-Plugin-MatchManifest 4.00 (December 7, 2010)
+our $VERSION = '4.01';
+# This file is part of Dist-Zilla-Plugin-MatchManifest 4.01 (August 9, 2013)
 
 
 use Moose;
@@ -26,6 +26,13 @@ use Moose::Autobox;
 with 'Dist::Zilla::Role::InstallTool';
 
 use autodie ':io';
+
+
+has require_builder => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 1,
+);
 
 sub setup_installer {
   my ($self, $arg) = @_;
@@ -46,13 +53,25 @@ sub setup_installer {
   } # end unless distribution already contained MANIFEST
 
   # List the files actually in the distribution:
+  my $builder_found;
+
   my $manifest = $files->map(sub {
     my $name = $_->name;
+    ++$builder_found if $name eq 'Makefile.PL' or $name eq 'Build.PL';
     return $name unless $name =~ /[ '\\]/;
     $name =~ s/\\/\\\\/g;
     $name =~ s/'/\\'/g;
     return qq{'$name'};
   })->sort->join("\n") . "\n";
+
+  if (not $builder_found and $self->require_builder) {
+    $self->log_fatal(<<'END ERROR');
+No Makefile.PL or Build.PL found!
+[MatchManifest] must come after [MakeMaker] or [ModuleBuild].
+Otherwise, the files they generate won't be listed in MANIFEST.
+Set require_builder = 0 if you really want a dist with no Makefile.PL.
+END ERROR
+  }
 
   return if $manifest eq $manifestFile->content;
 
@@ -105,12 +124,13 @@ Dist::Zilla::Plugin::MatchManifest - Ensure that MANIFEST is correct
 
 =head1 VERSION
 
-This document describes version 4.00 of
-Dist::Zilla::Plugin::MatchManifest, released December 7, 2010.
+This document describes version 4.01 of
+Dist::Zilla::Plugin::MatchManifest, released August 9, 2013.
 
 =head1 SYNOPSIS
 
   [MatchManifest]
+  require_builder = 1 ; this is the default and should seldom be changed
 
 =head1 DESCRIPTION
 
@@ -137,6 +157,21 @@ By keeping your MANIFEST under source control and using this plugin to
 make sure it's kept up to date, you can protect yourself against both
 problems.
 
+MatchManifest must come after your MakeMaker or ModuleBuild plugin, so
+that it can see any F<Makefile.PL> or F<Build.PL> generated.
+
+=head1 ATTRIBUTES
+
+=head2 require_builder
+
+For safety, MatchManifest aborts if it doesn't see a F<Makefile.PL> or
+F<Build.PL> in your dist.  If C<[MatchManifest]> is listed before
+C<[MakeMaker]> in your F<dist.ini>, then the manifest will be checked
+before F<Makefile.PL> has been added, which is bad.
+
+If you really want to create a dist with no F<Makefile.PL> or
+F<Build.PL>, you can set C<require_builder> to 0 to skip this check.
+
 =for Pod::Coverage
 setup_installer
 
@@ -156,17 +191,17 @@ No bugs have been reported.
 
 Christopher J. Madsen  S<C<< <perl AT cjmweb.net> >>>
 
-Please report any bugs or feature requests to
-S<C<< <bug-Dist-Zilla-Plugin-MatchManifest AT rt.cpan.org> >>>,
+Please report any bugs or feature requests
+to S<C<< <bug-Dist-Zilla-Plugin-MatchManifest AT rt.cpan.org> >>>
 or through the web interface at
-L<http://rt.cpan.org/Public/Bug/Report.html?Queue=Dist-Zilla-Plugin-MatchManifest>
+L<< http://rt.cpan.org/Public/Bug/Report.html?Queue=Dist-Zilla-Plugin-MatchManifest >>.
 
 You can follow or contribute to Dist-Zilla-Plugin-MatchManifest's development at
 L<< http://github.com/madsen/dist-zilla-plugin-matchmanifest >>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Christopher J. Madsen.
+This software is copyright (c) 2013 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

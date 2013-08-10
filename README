@@ -1,11 +1,11 @@
 
 
 This archive contains the distribution Dist-Zilla-Plugin-MatchManifest,
-version 4.00:
+version 4.01:
 
   Ensure that MANIFEST is correct
 
-This software is copyright (c) 2010 by Christopher J. Madsen.
+This software is copyright (c) 2013 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
