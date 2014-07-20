@@ -17,12 +17,12 @@ package Dist::Zilla::Plugin::MatchManifest;
 # ABSTRACT: Ensure that MANIFEST is correct
 #---------------------------------------------------------------------
 
-our $VERSION = '4.01';
-# This file is part of Dist-Zilla-Plugin-MatchManifest 4.01 (August 9, 2013)
+our $VERSION = '4.02';
+# This file is part of Dist-Zilla-Plugin-MatchManifest 4.02 (July 19, 2014)
 
 
-use Moose;
-use Moose::Autobox;
+use Moose 0.65;                 # attr fulfills requires
+use Moose::Autobox 0.09;        # flattten
 with 'Dist::Zilla::Role::InstallTool';
 
 use autodie ':io';
@@ -124,8 +124,8 @@ Dist::Zilla::Plugin::MatchManifest - Ensure that MANIFEST is correct
 
 =head1 VERSION
 
-This document describes version 4.01 of
-Dist::Zilla::Plugin::MatchManifest, released August 9, 2013.
+This document describes version 4.02 of
+Dist::Zilla::Plugin::MatchManifest, released July 19, 2014.
 
 =head1 SYNOPSIS
 
@@ -152,6 +152,11 @@ A file I don't want to distribute winds up in the tarball
 A file I did want to distribute gets left out of the tarball
 
 =back
+
+Dist::Zilla protects against the second problem by using GatherDir
+plugins that aren't restricted by a MANIFEST file.  But the standard
+L<Manifest|Dist::Zilla::Plugin::Manifest> plugin offers no protection
+against the first problem.
 
 By keeping your MANIFEST under source control and using this plugin to
 make sure it's kept up to date, you can protect yourself against both
@@ -197,11 +202,11 @@ or through the web interface at
 L<< http://rt.cpan.org/Public/Bug/Report.html?Queue=Dist-Zilla-Plugin-MatchManifest >>.
 
 You can follow or contribute to Dist-Zilla-Plugin-MatchManifest's development at
-L<< http://github.com/madsen/dist-zilla-plugin-matchmanifest >>.
+L<< https://github.com/madsen/dist-zilla-plugin-matchmanifest >>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Christopher J. Madsen.
+This software is copyright (c) 2014 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
